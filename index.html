@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hello 🌙</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* ================= BODY ================= */
+body{
+    margin:0;
+    font-family:'Comic Sans MS', cursive;
+    background:radial-gradient(circle at top,#1a1f3c,#050816);
+    color:#fff;
+    text-align:center;
+    overflow-x:hidden;
+}
+
+/* ================= MOON & STARS ================= */
+.sky{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    z-index:-1;
+    pointer-events:none;
+}
+
+.moon{
+    position:absolute;
+    top:40px;
+    right:40px;
+    width:90px;
+    height:90px;
+    background:#fff;
+    border-radius:50%;
+    box-shadow:0 0 40px rgba(255,255,255,.8);
+}
+
+.star{
+    position:absolute;
+    width:2px;
+    height:2px;
+    background:white;
+    border-radius:50%;
+    animation:twinkle 3s infinite ease-in-out;
+}
+
+.comet{
+    position:absolute;
+    width:6px;
+    height:220px;
+    pointer-events:none;
+
+    /* pusat rotasi di kepala */
+    transform-origin:50% 0%;
+    animation: cometFall 3s linear forwards;
+
+    /* EKOR KE BAWAH */
+    background: linear-gradient(
+        to bottom,
+        var(--color) 0%,
+        hsla(var(--hue),100%,65%,0.6) 30%,
+        hsla(var(--hue),100%,65%,0.2) 60%,
+        transparent 100%
+    );
+}
+
+/* 🔴 KEPALA KOMET (DI ATAS – BENAR) */
+.comet::after{
+    content:"";
+    position:absolute;
+    top:-10px;
+    left:50%;
+    transform:translateX(-50%);
+
+    width:18px;
+    height:18px;
+    border-radius:50%;
+
+    background: radial-gradient(
+        circle,
+        #ffffff 0%,
+        var(--color) 45%,
+        transparent 70%
+    );
+
+    filter: blur(0.4px);
+}
+
+/* GERAK */
+@keyframes cometFall{
+    from{
+        transform: translate(0,0) rotate(var(--rot));
+        opacity:1;
+    }
+    to{
+        transform: translate(var(--tx), var(--ty)) rotate(var(--rot));
+        opacity:0;
+    }
+}
+
+/* ✨ SPARK */
+.spark{
+    position:absolute;
+    width:4px;
+    height:4px;
+    background:white;
+    border-radius:50%;
+    box-shadow:0 0 8px rgba(200,180,255,1);
+    animation:sparkFly .8s ease-out forwards;
+}
+
+@keyframes sparkFly{
+    from{
+        transform:translate(0,0) scale(1);
+        opacity:1;
+    }
+    to{
+        transform:translate(
+            calc((var(--x)) * 1px),
+            calc((var(--y)) * 1px)
+        ) scale(0);
+        opacity:0;
+    }
+}
+
+@keyframes twinkle{
+    0%,100%{opacity:.3}
+    50%{opacity:1}
+}
+
+/* ================= PAGE ================= */
+.page{
+    display:none;
+    opacity:0;
+    transform: scale(.9) translateY(20px);
+}
+
+.page.active{
+    display:block;
+    animation: pageIn .45s cubic-bezier(.4,1.4,.6,1) forwards;
+}
+
+.page.exit{
+    animation: pageOut .3s ease forwards;
+}
+
+@keyframes pageIn{
+    from{
+        opacity:0;
+        transform: scale(.85) translateY(30px);
+    }
+    to{
+        opacity:1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes pageOut{
+    from{
+        opacity:1;
+        transform: scale(1) translateY(0);
+    }
+    to{
+        opacity:0;
+        transform: scale(.95) translateY(-20px);
+    }
+}
+
+/* ================= BUTTON ================= */
+button{
+    padding:10px 20px;
+    border:none;
+    border-radius:20px;
+    background:#ff4d88;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    margin-top:15px;
+}
+
+button.no{background:#777;}
+
+/* animasi lompat tombol NO */
+#noBtn{
+    transition: left .15s ease, top .15s ease;
+}
+
+button.no{background:#777;}
+
+.mute-btn{
+    position:fixed;
+    top:10px;
+    right:10px;
+    border-radius:50%;
+    z-index:10;
+}
+
+/* ================= STICKER ================= */
+.sticker{
+    width:170px;
+    animation:none !important;
+}
+.big{width:210px;}
+
+/* ================= SURAT ================= */
+.envelope{
+    width:240px;
+    height:160px;
+    background:#2d325a;
+    margin:40px auto;
+    position:relative;
+    border-radius:14px;
+    cursor:pointer;
+    overflow:hidden;
+}
+
+.flap{
+    position:absolute;
+    top:0;
+    width:100%;
+    height:100%;
+    background:#3f4580;
+    clip-path:polygon(0 0,50% 60%,100% 0);
+    transform-origin:top;
+    transition:.8s;
+    z-index:3;
+}
+
+.envelope.open .flap{
+    transform:rotateX(180deg);
+}
+
+.open-text{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    font-weight:bold;
+    color:#ffb6d5;
+    z-index:4;
+}
+
+/* ================= KERTAS ================= */
+.paper{
+    position:absolute;
+    bottom:-160px;
+    left:12px;
+    width:215px;
+    height:150px;
+    background:#fff;
+    color:#000;
+    border-radius:8px;
+    padding:12px;
+    box-sizing:border-box;
+    transition:1.5s ease;
+    z-index:1;
+    text-align:left;
+    font-size:14px;
+}
+
+.envelope.open .paper{
+    bottom:15px;
+}
+
+.cursor{
+    display:inline-block;
+    width:6px;
+    background:#000;
+    animation:blink 1s infinite;
+}
+
+@keyframes blink{
+    50%{opacity:0}
+}
+
+/* ================= LOVE HUJAN ================= */
+@keyframes floatUp{
+    from{transform:translateY(0);opacity:1}
+    to{transform:translateY(-120vh);opacity:0}
+}
+.love{
+    position:fixed;
+    bottom:-40px;
+    font-size:22px;
+    animation:floatUp 7s linear;
+    pointer-events:none;
+}
+
+/* ================= COMET ================= */
+.comet{
+    position:absolute;
+    width:6px;
+    height:180px;
+    border-radius:50%;
+    transform:rotate(45deg);
+    animation:cometFall 2.8s linear forwards;
+}
+
+/* ✨ SPARK */
+.spark{
+    position:absolute;
+    width:4px;
+    height:4px;
+    background:currentColor;
+    border-radius:50%;
+    box-shadow:0 0 10px currentColor;
+    animation:sparkFly .8s ease-out forwards;
+}
+
+/* 🌫️ DEBU */
+.dust{
+    position:absolute;
+    width:3px;
+    height:3px;
+    background:currentColor;
+    border-radius:50%;
+    opacity:.6;
+    animation:dustFade 2.5s linear forwards;
+}
+
+@keyframes sparkFly{
+    from{transform:translate(0,0) scale(1);opacity:1}
+    to{transform:translate(var(--x),var(--y)) scale(0);opacity:0}
+}
+
+@keyframes dustFade{
+    from{opacity:.6;transform:scale(1)}
+    to{opacity:0;transform:scale(0)}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SKY -->
+<div class="sky">
+    <div class="moon"></div>
+</div>
+
+<!-- AUDIO -->
+<audio id="bgMusic" loop playsinline preload="auto">
+    <source src="music.mp3">
+</audio>
+<audio id="paperSound">
+    <source src="paper.mp3">
+</audio>
+
+<button class="mute-btn" onclick="toggleMute()">🔊</button>
+
+<!-- PAGE 1 -->
+<div id="page1" class="page active">
+    <div class="card">
+        <h2>📩 Secret Letter</h2>
+
+        <div class="envelope" onclick="openLetter(this)">
+            <div class="flap"></div>
+            <div class="open-text" id="openText">✨ OPEN ✨</div>
+
+            <div class="paper">
+                <p id="letterText"></p><span class="cursor"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 2 -->
+<div id="page2" class="page">
+    <div class="card">
+        <h1>Halloo Rokhmah 🌙</h1>
+        <img src="gif1.gif" class="sticker">
+        <p>I have something special for you ✨</p>
+        <button onclick="goToPage(3)">Next 💖</button>
+    </div>
+</div>
+
+<!-- PAGE 3 -->
+<div id="page3" class="page">
+    <div class="card">
+        <img src="gif2.gif" class="sticker big">
+        <h2>Rokhmaah 💕</h2>
+        <p>Aku mau ngajakin km ngedate, mauu? 😳🌻</p>
+
+        <button onclick="goToPage(4)">mauu? 🥰</button>
+        <button id="noBtn" class="no">ga 😔</button>
+    </div>
+</div>
+
+<!-- PAGE 4 -->
+<div id="page4" class="page">
+    <div class="card">
+        <h1>YAYYYY 💕</h1>
+        <img src="gif3.gif" class="sticker big">
+        <p>jadi kapan kamu free? hehe 💌</p>
+
+        <input type="date" id="dateInput"><br><br>
+        <button onclick="sendDate()">Send Date 💖</button>
+
+        <p id="result"></p>
+    </div>
+</div>
+
+<script>
+/* ================= STAR GENERATOR ================= */
+const sky=document.querySelector(".sky");
+for(let i=0;i<80;i++){
+    const s=document.createElement("div");
+    s.className="star";
+    s.style.left=Math.random()*100+"vw";
+    s.style.top=Math.random()*100+"vh";
+    s.style.animationDelay=Math.random()*3+"s";
+    sky.appendChild(s);
+}
+
+/* ================= AUDIO FIX (100% WORK) ================= */
+const music = document.getElementById("bgMusic");
+const paperSound = document.getElementById("paperSound");
+let muted = false;
+
+// penting untuk mobile
+music.volume = 1;
+music.muted = false;
+
+function playMusic(){
+    music.play().then(()=>{
+        console.log("🎵 music playing");
+    }).catch(err=>{
+        console.log("❌ play error:", err);
+    });
+}
+
+function toggleMute(){
+    muted = !muted;
+    music.muted = muted;
+    paperSound.muted = muted;
+    document.querySelector(".mute-btn").innerText = muted ? "🔇" : "🔊";
+}
+
+function toggleMute(){
+    muted = !muted;
+    music.muted = muted;
+    paperSound.muted = muted;
+    document.querySelector(".mute-btn").innerText = muted ? "🔇" : "🔊";
+}
+/* ================= PAGE ================= */
+function goToPage(n){
+    const current = document.querySelector(".page.active");
+    const next = document.getElementById("page"+n);
+
+    if(current){
+        current.classList.add("exit");
+        setTimeout(()=>{
+            current.classList.remove("active","exit");
+            next.classList.add("active");
+        },300);
+    }else{
+        next.classList.add("active");
+    }
+
+    playMusic();
+}
+
+/* ================= TIME TEXT ================= */
+function getLetterText(){
+    const h=new Date().getHours();
+    if(h>=5 && h<11)
+        return "Selamat pagii nonaa 🌻 \nUdaa mam blm?    \nmam dlu gih\n        \nI have questions for u hehee 💕";
+    if(h>=10 && h<15)
+        return "Selamat siang nonaa 🌤️  \nSemalem abis ngapain ko bru bagun?\n          \nI want to tell you something hehee 💖";
+    return "Selamat malam nonaa 🌙  \nAku nulis sambil ditemani bulan hehe,         \nSemoga kamuu happy baca ini 💕";
+}
+
+/* ================= TYPEWRITER ================= */
+let i=0;
+function typeWriter(text){
+    if(i<text.length){
+        document.getElementById("letterText").innerHTML+=
+            text[i]==="\n"?"<br>":text[i];
+        i++;
+        setTimeout(()=>typeWriter(text),60);
+    }
+}
+
+/* ================= SURAT ================= */
+function openLetter(el){
+    el.classList.add("open");
+    document.getElementById("openText").style.display="none";
+
+    playMusic();        // 🔥 WAJIB dari klik user
+    paperSound.play();  // efek kertas
+
+    const text = getLetterText();
+    i = 0;
+    document.getElementById("letterText").innerHTML = "";
+    setTimeout(()=>typeWriter(text),500);
+
+    setTimeout(()=>goToPage(2),9000);
+}
+
+/* ================= NO BUTTON (BATAS CARD PAGE 3) ================= */
+const noBtn = document.getElementById("noBtn");
+const page3Card = document.querySelector("#page3 .card");
+
+function moveNoButton() {
+    const cardRect = page3Card.getBoundingClientRect();
+    const btnRect  = noBtn.getBoundingClientRect();
+
+    const padding = 10; // jarak aman dari tepi card
+
+    const minX = cardRect.left + padding;
+    const maxX = cardRect.right - btnRect.width - padding;
+
+    const minY = cardRect.top + padding;
+    const maxY = cardRect.bottom - btnRect.height - padding;
+
+    /* 🔒 pengaman ekstra */
+    if (maxX <= minX || maxY <= minY) return;
+
+    const x = minX + Math.random() * (maxX - minX);
+    const y = minY + Math.random() * (maxY - minY);
+
+    noBtn.style.position = "fixed";
+    noBtn.style.left = x + "px";
+    noBtn.style.top  = y + "px";
+}
+
+/* desktop */
+noBtn.addEventListener("click", moveNoButton);
+
+/* mobile */
+noBtn.addEventListener("touchstart", e => {
+    e.preventDefault();
+    moveNoButton();
+});
+
+/* desktop */
+noBtn.addEventListener("click", moveNoButton);
+
+/* mobile */
+noBtn.addEventListener("touchstart", e => {
+    e.preventDefault();
+    moveNoButton();
+});
+
+/* ================= LOVE (ONLY PAGE 4) ================= */
+const emojis=["❤️","💖","💕","💘","💝"];
+setInterval(()=>{
+    if(!document.getElementById("page4").classList.contains("active")) return;
+    const e=document.createElement("div");
+    e.className="love";
+    e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+    e.style.left=Math.random()*100+"vw";
+    document.body.appendChild(e);
+    setTimeout(()=>e.remove(),7000);
+},250);
+
+/* ================= COMET CINEMATIC (MULTI ANGLE) ================= */
+
+function spawnComet(){
+    /* 🔒 HANYA PAGE 4 */
+    if(!document.getElementById("page4").classList.contains("active")) return;
+
+    const sky = document.querySelector(".sky");
+
+    /* ===== WARNA ACAK ===== */
+    const hue = Math.floor(Math.random()*360);
+    const color = `hsl(${hue},100%,70%)`;
+
+    const comet = document.createElement("div");
+    comet.className = "comet";
+    comet.style.setProperty("--hue", hue);
+    comet.style.setProperty("--color", color);
+
+    /* ===== SPAWN: POJOK KANAN ATAS (RADIUS 200px) ===== */
+    const radius = 200;
+    const theta = Math.random() * (Math.PI / 2);
+
+    const startX = window.innerWidth - Math.cos(theta) * radius;
+    const startY = Math.sin(theta) * radius;
+
+    comet.style.left = startX + "px";
+    comet.style.top  = startY + "px";
+
+    /* ===== TARGET JATUH ===== */
+    const tx = -(window.innerWidth * (0.5 + Math.random()*0.3));
+    const ty =  window.innerHeight * (0.8 + Math.random()*0.4);
+
+    /* ===== ROTASI SESUAI ARAH JATUH ===== */
+    const angle = Math.atan2(ty, tx) * 180 / Math.PI + 90;
+
+    comet.style.setProperty("--tx", tx + "px");
+    comet.style.setProperty("--ty", ty + "px");
+    comet.style.setProperty("--rot", angle + "deg");
+
+    sky.appendChild(comet);
+    setTimeout(()=>comet.remove(),3000);
+}
+
+/* ==== JUMLAH KOMET (LEBIH BANYAK) ==== */
+setInterval(()=>{
+    spawnComet();
+    if(Math.random() > 0.6){
+        setTimeout(spawnComet,300);
+    }
+},600);
+
+/* ================= SEND WA ================= */
+function sendDate(){
+    const d=document.getElementById("dateInput").value;
+    const phone="6282235078092"; // GANTI
+    if(!d){
+        document.getElementById("result").innerHTML="Pilih tanggal dulu 🥺";
+        return;
+    }
+    document.getElementById("result").innerHTML=`💖 Date kita: ${d}`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(
+        "Haiii 💕 Aku free tanggal "+d+" ya 😆"
+    )}`,"_blank");
+}
+</script>
+
+</body>
+</html>
