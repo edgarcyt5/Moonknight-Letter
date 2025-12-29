@@ -6,14 +6,90 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* ================= BODY ================= */
-body{
+html, body{
+    width:100%;
+    height:100%;
     margin:0;
+    padding:0;
+}
+
+body{
     font-family:'Comic Sans MS', cursive;
     background:radial-gradient(circle at top,#1a1f3c,#050816);
     color:#fff;
-    text-align:center;
-    overflow-x:hidden;
+    overflow:hidden;
+}
+
+/* WRAPPER UTAMA (KUNCI CENTER) */
+.page-wrapper{
+    width:100%;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+}
+
+/* PAGE */
+.page{
+    display:none;
+    width:100%;
+    height:100%;
+    position:absolute;
+    top:0;
+    left:0;
+
+    justify-content:center;
+    align-items:center;
+
+    opacity:0;
+    transform:scale(.95);
+}
+
+/* PAGE AKTIF */
+.page.active{
+    display:flex;
+    animation:fadeIn .35s ease forwards;
+}
+
+/* PAGE KELUAR */
+.page.exit{
+    animation:fadeOut .25s ease forwards;
+}
+
+/* CARD */
+.card{
+    background:rgba(255,255,255,.08);
+    padding:25px;
+    max-width:350px;
+    width:90%;
+    border-radius:20px;
+    backdrop-filter:blur(8px);
+    box-shadow:0 0 25px rgba(255,105,180,.3);
+    margin:0;
+}
+
+/* ANIMASI TANPA ARAH KIRI/KANAN */
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:scale(.95);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+@keyframes fadeOut{
+    from{
+        opacity:1;
+        transform:scale(1);
+    }
+    to{
+        opacity:0;
+        transform:scale(.97);
+    }
 }
 
 /* ================= MOON & STARS ================= */
@@ -128,43 +204,24 @@ body{
     0%,100%{opacity:.3}
     50%{opacity:1}
 }
+/* ================= CARD ================= */
+.card{
+    background:rgba(255,255,255,.08);
+    padding:25px;
+    max-width:350px;
+    width:90%;
+    border-radius:20px;
+    backdrop-filter:blur(8px);
+    box-shadow:0 0 25px rgba(255,105,180,.3);
 
-/* ================= PAGE ================= */
-.page{
-    display:none;
-    opacity:0;
-    transform: scale(.9) translateY(20px);
-}
+    margin:0;
+    text-align:center;
 
-.page.active{
+    .card img,
+    .card video{
     display:block;
-    animation: pageIn .45s cubic-bezier(.4,1.4,.6,1) forwards;
+    margin:0 auto;
 }
-
-.page.exit{
-    animation: pageOut .3s ease forwards;
-}
-
-@keyframes pageIn{
-    from{
-        opacity:0;
-        transform: scale(.85) translateY(30px);
-    }
-    to{
-        opacity:1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-@keyframes pageOut{
-    from{
-        opacity:1;
-        transform: scale(1) translateY(0);
-    }
-    to{
-        opacity:0;
-        transform: scale(.95) translateY(-20px);
-    }
 }
 
 /* ================= BUTTON ================= */
@@ -204,6 +261,14 @@ button.no{background:#777;}
 .big{width:210px;}
 
 /* ================= SURAT ================= */
+.card{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+}
+
 .envelope{
     width:240px;
     height:160px;
@@ -244,6 +309,9 @@ button.no{background:#777;}
 }
 
 /* ================= KERTAS ================= */
+.envelope{
+    position:relative; /* 🔑 ACUAN KERTAS */
+}
 .paper{
     position:absolute;
     bottom:-160px;
@@ -257,12 +325,17 @@ button.no{background:#777;}
     box-sizing:border-box;
     transition:1.5s ease;
     z-index:1;
-    text-align:left;
+    text-align:center;
     font-size:14px;
 }
-
+.paper.show{
+    transform:translate(-50%, -120%);
+}
 .envelope.open .paper{
-    bottom:15px;
+    bottom:10px;
+}
+.paper *{
+    text-align:center;
 }
 
 .cursor{
@@ -351,6 +424,7 @@ button.no{background:#777;}
 
 <button class="mute-btn" onclick="toggleMute()">🔊</button>
 
+<div class="page-wrapper">
 <!-- PAGE 1 -->
 <div id="page1" class="page active">
     <div class="card">
@@ -370,7 +444,7 @@ button.no{background:#777;}
 <!-- PAGE 2 -->
 <div id="page2" class="page">
     <div class="card">
-        <h1>Halloo Rokhmah 🌙</h1>
+        <h1>Halloo Rokhmaah 🌙</h1>
         <img src="gif1.gif" class="sticker">
         <p>I have something special for you ✨</p>
         <button onclick="goToPage(3)">Next 💖</button>
@@ -404,6 +478,7 @@ button.no{background:#777;}
 </div>
 
 <script>
+
 /* ================= STAR GENERATOR ================= */
 const sky=document.querySelector(".sky");
 for(let i=0;i<80;i++){
@@ -459,17 +534,15 @@ function goToPage(n){
     }else{
         next.classList.add("active");
     }
-
-    playMusic();
 }
 
 /* ================= TIME TEXT ================= */
 function getLetterText(){
     const h=new Date().getHours();
     if(h>=5 && h<11)
-        return "Selamat pagii nonaa 🌻 \nUdaa mam blm?    \nmam dlu gih\n        \nI have questions for u hehee 💕";
+        return "Selamat pagii nonaa 🌻 \nUdaa mam blm?    \nmam dlu gih\n          \nI have questions for u hehee 💕";
     if(h>=10 && h<15)
-        return "Selamat siang nonaa 🌤️  \nSemalem abis ngapain ko baru bangun?\n            \nI want to tell you something hehee 💖";
+        return "Selamat siang nonaa 🌤️  \nSemalem abis ngapain ko baru bangun?\n             \nI want to tell you something hehee 💖";
     return "Selamat malam nonaa 🌙  \nAku nulis sambil ditemani bulan hehe,         \nSemoga kamuu happy baca ini 💕";
 }
 
@@ -624,5 +697,3 @@ function sendDate(){
 
 </body>
 </html>
-
-
