@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Hello 🌙</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
 html, body{
@@ -12,12 +13,16 @@ html, body{
     margin:0;
     padding:0;
 }
-
 body{
-    font-family:'Comic Sans MS', cursive;
+    font-family:'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     background:radial-gradient(circle at top,#1a1f3c,#050816);
     color:#fff;
     overflow:hidden;
+}
+
+h1, h2, h3{
+    font-family:'Dancing Script', cursive;
+    font-weight:600;
 }
 
 /* WRAPPER UTAMA (KUNCI CENTER) */
@@ -402,6 +407,12 @@ button.no{background:#777;}
 @keyframes dustFade{
     from{opacity:.6;transform:scale(1)}
     to{opacity:0;transform:scale(0)}
+}
+
+@media (max-width:480px){
+    .paper{
+        font-size:18px;
+    }
 }
 
 </style>
